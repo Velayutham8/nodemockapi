@@ -1,12 +1,27 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post, Req } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Request } from 'express';
 
-@Controller()
+@Controller('compile')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Post()
+  compileCode(@Req() request: Request): string {
+    // console.log(request.body.data);
+
+    const {
+      body: { data },
+    } = request;
+
+    const result = eval(data.typed_func)();
+
+    if (result !== 'Hello World') {
+      return 'Failed';
+    }
+
+    return 'Passed';
+
+    // return this.appService.getHello();
   }
 }
